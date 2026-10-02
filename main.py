@@ -274,6 +274,11 @@ def main(
         cfg.setdefault("llm", {}).setdefault(prov, {})["model"] = model
     if output_dir:
         cfg.setdefault("run", {})["output_dir"] = str(output_dir)
+    elif resume is not None:
+        # The parent's effective config records the parent's own run folder as
+        # output_dir; inheriting that verbatim would nest the continuation inside
+        # the parent. Anchor the continuation next to the parent instead.
+        cfg.setdefault("run", {})["output_dir"] = str(resume.parent)
     if julia_timeout is not None:
         cfg.setdefault("julia", {})["run_timeout_seconds"] = int(julia_timeout)
     if julia_parallel is not None:
@@ -332,7 +337,7 @@ def main(
     base_out = Path(cfg.get("run", {}).get("output_dir", "./output"))
     job_stamp = time.strftime("run_%Y%m%d_%H%M%S")
     out = (repo_root / base_out / job_stamp).resolve()
-    cfg.setdefault("run", {})["output_dir"] = str(out)
+    cfg.setdefault("run", {})["run_dir"] = str(out)
     for sub in ["logs", "data", "plots", "note", "params", "scripts", "input", "config"]:
         (out / sub).mkdir(parents=True, exist_ok=True)
     if resume is not None:
