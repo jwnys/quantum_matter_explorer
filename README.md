@@ -1,5 +1,13 @@
 # QuantumMatterExplorer
 
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
+[![Julia 1.12](https://img.shields.io/badge/julia-1.12-9558B2.svg)](https://julialang.org/)
+[![vLLM](https://img.shields.io/badge/serving-vLLM-orange.svg)](https://github.com/vllm-project/vllm)
+<!-- Once the paper is on arXiv, add:
+[![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/XXXX.XXXXX)
+-->
+
 QuantumMatterExplorer is an autonomous research agent for quantum many-body physics.
 Given a Hamiltonian it has never seen, it maps the ground-state phase diagram with
 DMRG (ITensorMPS/Julia) and exact diagonalization (XDiag): it plans the study, writes
