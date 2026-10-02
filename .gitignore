@@ -1,6 +1,6 @@
 # Run outputs and caches
 .github/
-output/
+output/*
 models/
 third_party/
 .scratch/
