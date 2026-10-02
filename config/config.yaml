@@ -97,7 +97,7 @@ agent:
   hitl_notify_urls: []                # optional webhook URLs (ntfy.sh topic, Slack webhook)
                                       # pinged when a review is requested
 
-# Julia / ITensor. See docs/INSTALL_JULIA.md and docs/setup_julia.sh.
+# Julia / ITensor. See docs/install_julia.md and docs/setup_julia.sh.
 julia:
   executable: julia                   # path to the Julia binary (a plain official binary;
                                       # avoid the juliaup shim, whose self-update lock can

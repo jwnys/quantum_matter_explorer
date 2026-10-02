@@ -13,7 +13,7 @@ model in a tool-calling loop, with a real filesystem, custom simulation tools, t
 helper subagents (a data analyst and an independent physics critic), and a library of
 "skills" that encode the scientific method one stage at a time. The backbone model is
 pluggable: a local model served by vLLM, or a cloud API (Anthropic, OpenAI, DeepSeek,
-and others). See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how it fits together.
+and others). See [docs/architecture.md](docs/architecture.md) for how it fits together.
 
 ## Installation
 
@@ -23,8 +23,8 @@ GPUs; with a cloud provider no GPU is needed.
 Clone the repository:
 
 ```bash
-git clone https://github.com/<your-org>/QuantumMatterExplorer.git
-cd QuantumMatterExplorer
+git clone https://github.com/jwnys/quantum_matter_explorer.git
+cd quantum_matter_explorer
 ```
 
 ### 1. The Python environment
@@ -55,7 +55,7 @@ for function signatures:
 bash docs/download_libraries.sh     # clones into ./third_party
 ```
 
-Details and cluster-specific advice are in [docs/INSTALL_JULIA.md](docs/INSTALL_JULIA.md).
+Details and cluster-specific advice are in [docs/install_julia.md](docs/install_julia.md).
 
 ### 3a. A local model with vLLM
 

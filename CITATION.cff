@@ -10,6 +10,7 @@ authors:
   - family-names: Carrasquilla
     given-names: Juan
 license: Apache-2.0
+repository-code: "https://github.com/jwnys/quantum_matter_explorer"
 preferred-citation:
   type: article
   title: "QuantumMatterExplorer: A Deep Agent for Autonomous Discovery of Quantum Many-Body Phases of Matter"
