@@ -1,7 +1,7 @@
 """The config a --resume continuation starts from.
 
-A fresh run writes config/effective_config.yaml into its run folder, while older
-sweep tooling wrote config/generated_config.yaml. Resume must accept both, and
+A fresh run writes config/effective_config.yaml into its run folder, while runs made
+by older versions of this tool carry config/generated_config.yaml. Resume must accept both, and
 must prefer the effective config, which records what actually ran (including any
 command-line overrides).
 """

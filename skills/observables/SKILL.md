@@ -67,7 +67,7 @@ the local Hilbert space you actually have.
 ## Running the survey
 
 **Sketch the box with exact diagonalisation before spending DMRG on it.** For spin-½, and for any
-model whose local dimensions allow `N ≈ 10–16`, sweep the parameter box at a small size first. Per
+model whose local dimensions allow `N ≈ 10-16`, sweep the parameter box at a small size first. Per
 point, record the ground state's sector and quantum numbers, the low-lying spectrum with its labels,
 the gap, the correlators at the accessible momenta, and the fidelity to the neighbouring point.
 That fidelity is trivial with exact vectors when the ground state is unique. Where it is (nearly)

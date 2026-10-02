@@ -141,7 +141,7 @@ Take a model where `S^z_i S^z_j` has a different coefficient from `S^x_i S^x_j +
 That is anisotropic by any reasonable use of the word. But rotating every spin about the `z` axis
 still leaves it alone, because the `z z` term does not involve the rotated components at all and
 the in-plane part is rotationally symmetric within the plane. So `S^z_tot` is conserved after all.
-The same holds for a single-site term like `D(S^z)^2`, and for a Dzyaloshinskii–Moriya vector
+The same holds for a single-site term like `D(S^z)^2`, and for a Dzyaloshinskii-Moriya vector
 pointing along `z`.
 
 Getting this wrong costs you twice. You switch off quantum numbers and lose a large factor of

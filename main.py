@@ -6,9 +6,9 @@ lifecycle, and the autonomous run driver around the single deep agent.
   python3 main.py --input input/xxz_chain.md
   python3 main.py --input input/j1j2_chain.tex --provider anthropic
 
-Run it from the driver virtual environment (LangChain 1.x + deepagents). The
-vLLM server runs in its own environment (see src/llm/vllm.py), so the driver
-environment does not need vllm installed.
+Run it from the project virtual environment. With the [vllm] extra installed,
+the model server runs from the same environment; alternatively point
+llm.vllm.server_python (or QME_VLLM_PYTHON) at a separate server environment.
 """
 
 from __future__ import annotations
@@ -43,14 +43,14 @@ INPUT ({fmt}):
 ------------------------------------------------------------
 
 Work in the current run directory. Begin by drafting `plan.md` (mandate + observable spec + DMRG
-settings + the Phase-1 coarse-survey design. Give a one-line rationale for each design choice and state
+settings + the Stage-1 coarse-survey design. Give a one-line rationale for each design choice and state
 the candidate phases you expect; keep the spec tables compact), lay out a short `write_todos` checklist,
 and get a `physics-critic` review of the plan before spending compute. Then run the study: coarse survey,
 detect boundaries, discover the order, refine + finite-size scaling. Open the note with a FULL
 `## Introduction` (write out the Hamiltonian, define every symbol, state the research question), not a
 one-liner, and write each finding as explanatory PROSE, not a bare table. Update `note/research_note.md`,
 the figures in `plots/`, and `RUN_SUMMARY.md` after EVERY experiment. Keep `RUN_SUMMARY.md` current
-through the FSS/analysis phases too, not just the early survey. Keep working until the phase diagram is
+through the FSS/analysis stages too, not just the early survey. Keep working until the phase diagram is
 fully characterized and written up with a `## Phase diagram` and `## Conclusion`."""
 
 
@@ -161,7 +161,7 @@ def _count_tool_calls(messages: list) -> int:
 def find_parent_config(parent: Path) -> Optional[Path]:
     """The config a --resume continuation starts from. Prefer the parent's effective
     config (what actually ran, CLI overrides included); fall back to the
-    generated_config.yaml that older sweep tooling wrote."""
+    generated_config.yaml name that runs from older versions of this tool carry."""
     for cand in ("config/effective_config.yaml", "config/generated_config.yaml"):
         if (parent / cand).exists():
             return parent / cand
@@ -560,6 +560,7 @@ def main(
             base_dir=str((repo_root / _dl).resolve()) if _dl else None,
             python_bin=v.get("server_python"),
             log_dir=str(out / "logs"),
+            pid_dir=str(_scratch),
             enforce_eager=v.get("enforce_eager", False),
             tool_call_parser=v.get("tool_call_parser", "gemma4"),
             chat_template=v.get("chat_template"),

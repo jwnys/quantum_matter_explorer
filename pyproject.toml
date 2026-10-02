@@ -10,8 +10,9 @@ authors = [
   { name = "Juan Carrasquilla" },
 ]
 
-# The vLLM server runs in a separate environment (requirements-vllm.txt), so this
-# environment is the LangChain client, deepagents, and the scientific stack only.
+# Core dependencies: the LangChain client, deepagents, and the scientific stack.
+# Serving a local model needs the [vllm] extra below, either in this same
+# environment or in a separate server environment (requirements-server.txt).
 dependencies = [
   "deepagents==0.6.12",
   # deepagents pulls langchain, langchain-core, langgraph, langchain-anthropic,

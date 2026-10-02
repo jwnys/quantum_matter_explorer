@@ -29,10 +29,6 @@ llm:
                                       # (raising it raises the cost per call)
     # max_tokens: 16384               # optional per-response cap; omitted = API default
 
-  # Per-agent overrides: a subagent can run at different sampling settings.
-  agent_models:
-    data-analyst:   { temperature: 1.0 }
-
 agent:
   recursion_limit: 100000
   enable_data_analyst: true

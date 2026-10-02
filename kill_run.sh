@@ -8,8 +8,8 @@
 # nothing else (other runs are never touched).
 #
 # Usage:
-#   ./kill_run.sh <run-id>        e.g. ./kill_run.sh run_20260629_161328
-#   ./kill_run.sh 161328          any substring of the run-dir name works
+#   ./kill_run.sh <run-id>        e.g. ./kill_run.sh run_20260101_120000
+#   ./kill_run.sh 120000          any substring of the run-dir name works
 #   ./kill_run.sh -n <run-id>     DRY RUN: show what would be killed, kill nothing
 set -u
 

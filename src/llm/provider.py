@@ -11,13 +11,9 @@ Supports:
 from __future__ import annotations
 
 import os
-import shutil
-import subprocess
-import time
 import logging
 from typing import Any
 
-import httpx
 from langchain_core.language_models import BaseChatModel
 
 logger = logging.getLogger("qme.llm_provider")
@@ -57,7 +53,7 @@ def resolve_agent_provider(cfg: dict[str, Any], agent_name: str) -> tuple[str, d
       3. cfg.agent_models.<agent>   per-agent override
 
     A `provider:` key in (2) or (3) switches backends entirely (e.g. global
-    default vLLM, programmer on Anthropic).
+    default vLLM, the physics-critic on Anthropic).
     """
     default_provider = cfg.get("provider", "vllm")
     am = cfg.get("agent_models") or {}
@@ -183,7 +179,7 @@ def _build_openai(sub: dict[str, Any]) -> BaseChatModel:
         kwargs["timeout"] = sub["request_timeout"]
 
     # `use_responses_api` is not cosmetic for a reasoning model: it is required for tool use.
-    # Verified live against gpt-5.6-luna: Chat Completions returns
+    # On such a model, Chat Completions returns
     #   400 "Function tools with reasoning_effort are not supported for gpt-5.6-luna in
     #        /v1/chat/completions. To use function tools, use /v1/responses or set
     #        reasoning_effort to 'none'."
@@ -198,14 +194,13 @@ def _build_openai(sub: dict[str, Any]) -> BaseChatModel:
 def _build_anthropic(sub: dict[str, Any]) -> BaseChatModel:
     """Claude via the Anthropic API.
 
-    THREE THINGS HERE RETURN A 400 IF YOU WRITE THEM THE WAY OLDER CODE DID. All three were in the
-    previous version of this function.
+    THREE THINGS HERE RETURN A 400 IF YOU WRITE THEM THE WAY OLDER CODE DID.
 
     1. `temperature`, `top_p` and `top_k` are REMOVED on Claude Opus 5, Fable 5, Sonnet 5 and the
        4.7/4.8 family. Sending any of them is a 400, not a silently ignored field. So temperature is
        forwarded ONLY when the config explicitly sets it, which is how an older model such as
-       Sonnet 4.5 can still be driven through this same builder. `presets.TEMPERATURE = None` is
-       therefore not merely conventional for Claude, it is required.
+       Sonnet 4.5 can still be driven through this same builder. Leaving temperature unset for these
+       models is required, not a style choice.
     2. `thinking={"type": "enabled", "budget_tokens": N}` is removed on the same models and returns
        a 400. Adaptive thinking replaces it, and on Opus 5 thinking is ON BY DEFAULT, so omitting
        the parameter still thinks. `display` defaults to "omitted", which leaves the thinking text
@@ -281,7 +276,7 @@ def _build_vllm(sub: dict[str, Any]) -> BaseChatModel:
 
     kwargs = {
         "model": sub.get("model", "default"),
-        "base_url": f"{sub.get('base_url', 'http://localhost:11442').rstrip('/')}/v1",
+        "base_url": f"{sub.get('base_url', 'http://localhost:11436').rstrip('/')}/v1",
         "api_key": sub.get("api_key", "EMPTY"),
         "temperature": sub.get("temperature", 0.2),
     }
@@ -292,8 +287,8 @@ def _build_vllm(sub: dict[str, Any]) -> BaseChatModel:
     # vLLM-only sampling params (top_k, min_p, repetition_penalty, ...) are not
     # in the OpenAI schema. The OpenAI SDK rejects them as top-level kwargs but
     # forwards anything in `extra_body` straight into the request body, where
-    # vLLM picks them up. Forwarded ONLY when present → no behavior change for a
-    # config that omits them (e.g. gemma sets only top_k).
+    # vLLM picks them up. Forwarded only when present, so a config
+    # that omits them is unaffected.
     extra_body: dict[str, Any] = {}
     for _k in ("top_k", "min_p", "repetition_penalty"):
         if _k in sub:

@@ -98,7 +98,7 @@ A measured example of why this is not bookkeeping. One study ran the same points
 512 and got half-chain entropies identical to four decimals (0.1560, 1.0667, 1.5802 at three
 points). DMRG costs go as the cube of the bond dimension, so the 512 runs were eight times the work
 for no change in the answer, and the wasted time was spent on exactly the largest sizes that then
-failed to finish. The 256-vs-512 comparison was already sitting in its own output; nothing had
+failed to finish. The 256-vs-512 comparison was already sitting in its own output. Nothing had
 asked it to look.
 
 **Raise the bond dimension until the quantity you will fit stops moving**, not until the energy
@@ -348,7 +348,7 @@ Sq(C, r, q) = real(sum(C[i, j] * cis(dot(q, r[i] - r[j]))
 ```
 
 Use the full complex exponential, not a cosine. They agree when the correlator is real and
-symmetric, which it usually is, but a model with Dzyaloshinskii–Moriya terms or a chiral ground
+symmetric, which it usually is, but a model with Dzyaloshinskii-Moriya terms or a chiral ground
 state has a complex `C`, and a cosine throws away the part of it that carries the chirality. The
 `cis` form costs nothing and is right in both cases. `real` at the end is then just discarding
 round-off, since the sum is real for any Hermitian `C`.

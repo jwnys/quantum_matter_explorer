@@ -43,8 +43,8 @@ covers.
 | **5** Report | The note, the figures, `phase_diagram.json` | `reporting` |
 
 These numbers are the ones the system prompt uses. There is one scheme, not two. Inside a skill,
-individual decision steps carry their own labels (`A1`–`A5` in `model-setup`, `D0`–`D5` in
-`phase-id`, `E1`–`E4` in `transitions`) and those are what cross-references point at.
+individual decision steps carry their own labels (`A1`-`A5` in `model-setup`, `D0`-`D5` in
+`phase-id`, `E1`-`E4` in `transitions`) and those are what cross-references point at.
 
 Two skills sit outside the sequence. `itensor-dmrg` is code (patterns, settings, and the crashes
 worth knowing about), read whenever Julia gets written. `disorder` is cross-cutting: it applies at

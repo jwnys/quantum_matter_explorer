@@ -307,7 +307,8 @@ def agent_stats(stats: "str | Path | pd.DataFrame") -> pd.DataFrame:
 _NUDGE_PATTERNS = {
     "loop (run_julia, no data)": "likely LOOPING",
     "thrash (edit w/o run)":     "without running it",
-    "stale note":               "was last",
+    "stale note":               "note/research_note.md was last",
+    "stale RUN_SUMMARY":        "RUN_SUMMARY.md was last updated",
 }
 
 

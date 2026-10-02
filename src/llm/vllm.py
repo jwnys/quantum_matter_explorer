@@ -1,8 +1,8 @@
 """
 src/llm/vllm.py
 Manages a standalone vLLM server subprocess: launch, health checks, model
-warm-up, and clean shutdown. The server runs in its own virtual environment
-(see `python_bin`), so the driver environment does not need vllm installed.
+warm-up, and clean shutdown. The server runs from the current environment when
+vllm is installed in it, or from a separate one named by `python_bin`.
 """
 
 import os
@@ -13,7 +13,7 @@ import urllib.error
 import json
 import logging
 import signal
-from typing import Optional, List
+from typing import Optional
 
 from ._orphan import write_pidfile, reap_own_orphan, clear_pidfile
 
@@ -25,7 +25,7 @@ class VllmServer:
     def __init__(
         self,
         model: str,
-        host: str = "127.0.0.1:11442",
+        host: str = "127.0.0.1:11436",
         gpu_id: Optional[str] = None,
         context_length: Optional[int] = None,
         gpu_memory_utilization: Optional[float] = None,
@@ -40,6 +40,7 @@ class VllmServer:
         startup_cleanup: str = "own",
         python_bin: Optional[str] = None,
         log_dir: Optional[str] = None,
+        pid_dir: Optional[str] = None,
     ):
         """
         Initializes the vLLM server wrapper.
@@ -73,6 +74,10 @@ class VllmServer:
                 interpreter is used (single-environment setup), else plain
                 "python3" from PATH.
             log_dir: where to write vllm_server.log (default: base_dir or cwd).
+            pid_dir: where the crash-recovery pid file lives. Give it a stable,
+                run-independent location so `startup_cleanup: own` can reap an
+                orphaned server even when the next launch happens from a
+                different working directory. Defaults to base_dir or cwd.
             rope_scaling: optional dict of HF rope_scaling config, emitted as
                 `--hf-overrides {"rope_scaling": <dict>}`. Use to serve a model
                 ABOVE its native context via YaRN (e.g. Qwen2.5 32K→128K:
@@ -117,7 +122,7 @@ class VllmServer:
         # server it (or a prior crash on the same GPUs) launched, so different-GPU parallel
         # runs get independent pid-files and never reap each other.
         gpu_tag = (self.gpu_id or "all").replace(",", "-").replace(" ", "") or "all"
-        self._pidfile = os.path.join(base_dir or ".", f"vllm_gpu{gpu_tag}.pid")
+        self._pidfile = os.path.join(pid_dir or base_dir or ".", f"vllm_gpu{gpu_tag}.pid")
 
         self.process: Optional[subprocess.Popen] = None
         self.env = os.environ.copy()

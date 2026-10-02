@@ -174,7 +174,7 @@ transition out of a gapless phase it is the lowest singlet against the lowest tr
 `k = π`. The parameter value at which those two levels cross, `λ*(N)`, is the finite-size estimate.
 For transitions of this kind it moves as `1/N²` (confirm that the sequence is consistent with that
 form before extrapolating), and it converges at sizes where every correlation-ratio crossing is
-still drifting. `ed-validation` has the backend. Rings of 20–24 sites are reachable with sparse
+still drifting. `ed-validation` has the backend. Rings of 20-24 sites are reachable with sparse
 Lanczos when 16 is not enough.
 
 ---

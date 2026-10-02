@@ -102,9 +102,11 @@ class IncrementalOutputNudge(AgentMiddleware):
     (a) loop: many `run_julia` calls with no new `data/*.json` written, the clean
         "looping, not progressing" signal. Nudges the agent to smoke-test smaller,
         raise the timeout, cut bond dimension or size, or step back.
-    (b) stale note: several completed (fresh) DMRG runs since the note was last
+    (b) edit thrash: one file edited many times without being run. Nudges the
+        agent to execute and see the actual error instead of editing blind.
+    (c) stale note: several completed (fresh) DMRG runs since the note was last
         updated. Nudges the incremental-output habit.
-    (c) stale RUN_SUMMARY: several completed runs since the last `update_run_summary`
+    (d) stale RUN_SUMMARY: several completed runs since the last `update_run_summary`
         call. Tracked independently of the note, because the model tends to keep the
         note current while letting RUN_SUMMARY rot after the early survey.
     """

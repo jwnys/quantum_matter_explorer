@@ -44,7 +44,7 @@ import logging
 from langchain.agents.middleware.types import AgentMiddleware
 from langchain_core.messages import ToolMessage
 
-logger = logging.getLogger("qme.agent")
+logger = logging.getLogger("qme.tool_error_guard")
 
 # Longest exception text passed on to the agent. A tool can raise with a whole file in the
 # message. The full text always reaches logs/ via logger.exception regardless.

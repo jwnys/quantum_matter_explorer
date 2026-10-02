@@ -47,7 +47,7 @@ If the spread next to your signal is large, the first response is more realisati
 error bar on the ones you have.
 
 **How many.** Order-of-magnitude guidance, to be adjusted by the self-averaging test below: a few
-tens of realisations (30–50) deep inside a phase, where samples agree, and a hundred or more near
+tens of realisations (30-50) deep inside a phase, where samples agree, and a hundred or more near
 a transition, or wherever the distribution itself is the result. Report the number of realisations
 beside every disorder-averaged quantity.
 

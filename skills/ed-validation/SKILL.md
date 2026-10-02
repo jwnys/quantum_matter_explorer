@@ -49,7 +49,7 @@ system that sees the dictionary.
 Pick by local Hilbert space dimension, not by habit.
 
 **Spin-½ sites: XDiag.** Patterns below. The full space at `N ≤ 16` is at
-most 65536 states, which Lanczos handles instantly. Larger rings, roughly `N = 20–24`, remain
+most 65536 states, which Lanczos handles instantly. Larger rings, roughly `N = 20-24`, remain
 reachable with sparse Lanczos and symmetry sectors when level spectroscopy (`transitions` E3) or a
 degeneracy count (`phase-id`) needs them. The bound of 16 is the comfortable full-space size, not
 a ceiling.

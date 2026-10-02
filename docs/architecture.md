@@ -55,9 +55,10 @@ note with figures.
 | `ImageReadGuard` | on non-vision models, stops image files from being read into the conversation (a text-only endpoint 400s unrecoverably) |
 | rate limiting (optional) | `RateLimitRetryMiddleware` waits out provider 429s; `TokenRateLimitMiddleware` throttles to a tokens-per-minute budget |
 
-The last three guards are registered on the deepagents harness profile rather than
+The three crash guards (`ContextOverflowClassifier`, `ToolErrorGuard`,
+`ImageReadGuard`) are registered on the deepagents harness profile rather than
 appended per agent, because that is the only route that also covers the auto-created
-`general-purpose` subagent.
+`general-purpose` subagent. The optional rate-limit middleware is appended per agent.
 
 ## Tools (`src/tools/`)
 
@@ -70,11 +71,12 @@ appended per agent, because that is the only route that also covers the auto-cre
 | `lookup_doc` | greps the local ITensor source mirror for a symbol's real signature. |
 | `update_run_summary` | one-call append to `RUN_SUMMARY.md`, the durable results ledger. |
 | `finish` | the explicit done signal: writes the `.finished` sentinel the run driver stops on. Called once, when the study is complete. |
+| `request_plan_review`, `request_review` | human-in-the-loop checkpoints (registered only when HITL is on): write a review file, wait for the human, return their comments. |
 
 ## Planning (`plan.md`)
 
 Planning is iterative: plan, execute, analyze, replan. `write_todos` is the short
-tracker; the elaborate plan lives in `plan.md` (mandate, fixed observable spec, DMRG
+tracker, and the elaborate plan lives in `plan.md` (mandate, fixed observable spec, DMRG
 settings, evolving experiment design, revision log), reviewed by the physics-critic
 and re-read at stage boundaries.
 
@@ -95,7 +97,7 @@ checkpointer. The driver re-invokes a yielded-but-unfinished agent with a soft n
 and stops cleanly on the first of: the agent calling `finish` (the `.finished`
 sentinel), a no-progress backstop (no new artifacts for `run.no_progress_iterations`
 rounds), or the agent yielding with no tool calls. The `run.max_outer_iterations` cap
-is a runaway backstop; on hitting it the driver sends one final synthesis nudge
+is a runaway backstop: on hitting it the driver sends one final synthesis nudge
 rather than cutting the run off. A figure-reference integrity check runs at finalize,
 then everything shuts down gracefully.
 

@@ -309,7 +309,7 @@ declines, or omits a region the note describes, is a BLOCKER on its own.
 
 **Never open `data/*.json` with `read_file`.** They are single-line numeric dumps of tens of kB each
 (full structure-factor arrays at full float precision). Six of them will exhaust your context and end
-the review before you have written a word. This has happened and cost a completed 127-point study.
+the review before you have written a word. This can end the review and waste the whole study.
 To get at the numbers, write ONE `run_python` script that globs `data/`, computes what you need, and
 PRINTS a short summary. The script does the reading. Only its printed output reaches you. That is the
 only way you should ever look at the data, and it is also faster than reading files one at a time.

@@ -220,7 +220,7 @@ def request_plan_review(summary: str) -> str:
     comments = _human_gate("PLAN", summary)
     if not comments:
         _touch_sentinel(PLAN_REVIEWED)
-        return "Plan review APPROVED. Proceed with the study (run the survey / Phase-0 runs)."
+        return "Plan review APPROVED. Proceed with the study (run the survey and Stage-0 validation)."
     return (f"Human requested PLAN changes:\n{comments}\n\n"
             f"Re-read plan.md (they may also have edited it), update it accordingly, then call "
             f"request_plan_review again with summary='<what you changed>' to re-present for review.")

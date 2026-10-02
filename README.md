@@ -26,7 +26,7 @@ and others). See [docs/architecture.md](docs/architecture.md) for how it fits to
 ## Installation
 
 Tested on Linux with Python 3.13 (3.11+ required). Running a local model needs CUDA
-GPUs; with a cloud provider no GPU is needed.
+GPUs. With a cloud provider no GPU is needed.
 
 Clone the repository:
 
@@ -38,7 +38,7 @@ cd quantum_matter_explorer
 ### 1. The Python environment
 
 One environment runs everything. Add the `[vllm]` extra if you will serve a local
-model on this machine; leave it off for cloud-only use:
+model on this machine, and leave it off for cloud-only use:
 
 ```bash
 python3 -m venv .venv
@@ -72,7 +72,7 @@ server from the same environment and stops it at the end of the run.
 
 If you prefer to keep the inference server in its own environment (useful on
 clusters, where the two stacks are easier to rebuild separately), create one from
-`requirements-vllm.txt` and point the launcher at it, either in `config/config.yaml`
+`requirements-server.txt` and point the launcher at it, either in `config/config.yaml`
 (`llm.vllm.server_python: <venv>/bin/python`) or via the environment:
 
 ```bash

@@ -90,6 +90,9 @@ agent:
   # Optional provider pacing (both off by default):
   #   rate_limit_retry: 6             # retry a 429 up to N times, honoring the advertised wait
   #   tokens_per_minute: 400000       # local token budget per rolling minute
+  # Other optional knobs:
+  #   max_input_tokens: 190000        # absolute compaction budget; wins over summary_headroom
+  #   skills_exclude: [disorder]      # load the skill library minus the named skills
   # Human-in-the-loop: pause for review of plan.md and of the final note before finish.
   # Off = fully autonomous. Also available per run as --hitl / --no-hitl.
   human_in_the_loop: false
@@ -126,7 +129,7 @@ run:
 # Logging: full transcript plus per-event stats.
 logging:
   level: INFO                    # DEBUG | INFO | WARNING
-  log_dir: ./output/logs
+  log_dir: ./output/logs         # informational; each run logs under its own run folder
   jsonl_file: interactions.jsonl
   text_file: transcript.txt
   rich_console: true

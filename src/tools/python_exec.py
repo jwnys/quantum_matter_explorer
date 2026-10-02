@@ -21,7 +21,7 @@ Three guards, mirroring `run_julia`:
      the child leaves grandchildren running detached.
   3. Output truncation, so a chatty script cannot flood the context.
 
-Result format matches `run_julia`'s so the agent (and `collect.py`'s error parsing) reads
+Result format matches `run_julia`'s so the agent reads
 the same `status=OK|ERROR|TIMEOUT` header.
 """
 
