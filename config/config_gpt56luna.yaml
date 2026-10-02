@@ -1,0 +1,111 @@
+# QuantumMatterExplorer configuration: GPT-5.6-luna (OpenAI cloud, flex tier)
+#
+# Runs the same DMRG study as the local configs, via OpenAI's API:
+#     python main.py -i input/xxz_chain.md -c config/config_gpt56luna.yaml
+#
+# Setup: put OPENAI_API_KEY in .env (gitignored, auto-loaded).
+#
+# Cost notes for this model (check the current pricing page before a long run):
+#   * Flex tier halves output and cached-input prices but not uncached input, and an
+#     agent's tokens are almost all input, so the saving is real but modest. The big
+#     lever is the cache-hit rate.
+#   * Prompts above 272K input tokens are billed at 2x input for the whole request, so
+#     the compaction budget below is kept well under that cliff.
+
+llm:
+  provider: openai
+
+  openai:
+    model: gpt-5.6-luna
+    api_key_env: OPENAI_API_KEY        # key read from this env var, never stored in config
+    service_tier: flex                 # cheaper output + cached input, higher latency; flex
+                                       # can transiently return capacity errors, so if a run
+                                       # shows mid-run failures set `service_tier: auto`
+    context_length: 1050000            # the documented window, recorded for reference; the
+                                       # compaction trigger for this config comes from
+                                       # agent.max_input_tokens below
+    # A ceiling against a runaway generation, not a budget: you are billed for tokens
+    # actually produced, so a high cap costs nothing extra, while a cap that bites
+    # truncates a response mid-tool-call and breaks the run. The reasoning trace is
+    # billed as output and counts against this cap, so it must be generous; 96000 stays
+    # under the documented 128000 maximum.
+    max_tokens: 96000
+    request_timeout: 1800              # flex is slow
+    max_retries: 5                     # transient capacity errors and connection resets.
+                                       # Rate limits are deliberately not left to the SDK:
+                                       # its backoff caps at a few seconds and cannot
+                                       # outwait a rolling-minute token window. That job
+                                       # belongs to agent.rate_limit_retry below.
+
+    # Required for tool use with a reasoning model: Chat Completions rejects function
+    # tools when reasoning is active ("use /v1/responses or set reasoning_effort to
+    # 'none'"), and the error fires even with reasoning_effort unset because a
+    # reasoning model applies a non-none default. This agent is almost entirely tool
+    # calls, so without the Responses API it would fail on the first one.
+    use_responses_api: true
+
+    # Accepted values: none | minimal | low | medium | high | xhigh | max. Low is
+    # OpenAI's own recommendation for tool-use and multi-step planning workloads, and
+    # reasoning tokens are billed as output, so it is also the cheap baseline. Raising
+    # it is a clean one-variable comparison (same model, same prompt, same spec).
+    reasoning_effort: low
+
+    # Sampling is deliberately unset: this model accepts temperature but rejects top_p
+    # with a 400, and leaving both unset uses the API defaults.
+
+agent:
+  # Compaction budget as an absolute token count. Compaction triggers at 0.85 of this,
+  # so the conversation compacts near 189k tokens, comfortably below the 272K pricing
+  # cliff. An absolute number is used instead of summary_headroom because a fraction of
+  # this model's 1.05M window would give a wildly different budget than the same
+  # fraction of a 262K local window, which matters when comparing backbones.
+  max_input_tokens: 222822
+  # Wait out a provider 429 instead of dying on it (src/rate_limit.py). N attempts per
+  # model call, with escalating waits. A persistent limit still raises after the last
+  # attempt, so this cannot mask a real failure.
+  rate_limit_retry: 6
+  # Proactive token budget (src/rate_limit.py): model calls are throttled so the
+  # rolling 60 s window never knowingly exceeds this. Set it to your organisation's
+  # actual TPM cap, and lower it if 429s still show up in the run log (the pre-call
+  # token figure is an estimate, and the quota is shared across the API key).
+  tokens_per_minute: 2000000
+  recursion_limit: 100000
+  enable_data_analyst: true
+  enable_physics_critic: true
+  enable_skills: true
+  thinking_mode: false                 # the <|think|> prepend is Gemma-only
+  enable_path_guard: true
+  enable_edit_reground: true
+  enable_nudges: true
+  nudge_every_k: 4
+  nudge_loop_k: 6
+  nudge_thrash_k: 8
+  nudge_summary_k: 6
+  human_in_the_loop: false
+  hitl_timeout_minutes: 720
+  hitl_notify_urls: []
+
+julia:
+  executable: julia
+  depot_path: null
+  itensor_libraries_dir: third_party
+  run_timeout_seconds: 600
+  project_dir: output/julia_project
+  threads: 8
+  blas_threads: 8
+  batch_max_parallel: 8
+
+run:
+  output_dir: ./output
+  max_outer_iterations: 100
+  no_progress_iterations: 2
+
+logging:
+  level: INFO
+  log_dir: ./output/logs
+  jsonl_file: interactions.jsonl
+  text_file: transcript.txt
+  rich_console: true
+  slack_webhook_url: null
+  slack_truncate: true
+  terminal_truncate: true

@@ -1,0 +1,77 @@
+# QuantumMatterExplorer configuration: DeepSeek V4 (cloud API)
+#
+# Runs the same DMRG study via DeepSeek's cloud API (no local GPU needed):
+#     python main.py -i input/j1j2_chain.tex -c config/config_deepseek.yaml
+#
+# Setup: put DEEPSEEK_API_KEY in .env (gitignored, auto-loaded). See .env.example.
+#
+# Notes on the DeepSeek API:
+#   * Models: deepseek-v4-pro (default) or deepseek-v4-flash (cheaper, faster); switch
+#     via `model`. Both have a 1M context and OpenAI-compatible tool calling.
+#   * Thinking mode ignores `temperature`, and with tool calls it requires the
+#     assistant's reasoning_content to be echoed back every turn, which the LangChain
+#     round-trip does not guarantee. If tool calls misbehave with thinking on, set
+#     `thinking: false` (non-thinking honors temperature and does tool calling cleanly).
+#   * DeepSeek's own temperature guidance is task-dependent (coding 0.0, data analysis
+#     1.0, general 1.3). This agent is a mix of code, analysis and prose, so 0.6 is a
+#     deliberate middle. Tune freely.
+
+llm:
+  provider: deepseek
+
+  deepseek:
+    model: deepseek-v4-pro            # or deepseek-v4-flash: same API, just swap this
+    base_url: https://api.deepseek.com
+    api_key_env: DEEPSEEK_API_KEY     # the key is read from this env var, not stored here
+    temperature: 0.6
+    thinking: true                    # see the note above if tool calls misbehave
+    context_length: 262144            # compaction-trigger basis; DeepSeek supports up to 1M
+                                      # (raising it raises the cost per call)
+    # max_tokens: 16384               # optional per-response cap; omitted = API default
+
+  # Per-agent overrides: a subagent can run at different sampling settings.
+  agent_models:
+    data-analyst:   { temperature: 1.0 }
+
+agent:
+  recursion_limit: 100000
+  enable_data_analyst: true
+  enable_physics_critic: true
+  enable_skills: true
+  thinking_mode: false                # the <|think|> prepend is Gemma-only; DeepSeek
+                                      # thinking is controlled by deepseek.thinking above
+  enable_path_guard: true
+  enable_edit_reground: true
+  enable_nudges: true
+  nudge_every_k: 4
+  nudge_loop_k: 6
+  nudge_thrash_k: 8
+  nudge_summary_k: 6
+  human_in_the_loop: false
+  hitl_timeout_minutes: 720
+  hitl_notify_urls: []
+
+julia:
+  executable: julia
+  depot_path: null
+  itensor_libraries_dir: third_party
+  run_timeout_seconds: 600
+  project_dir: output/julia_project
+  threads: 8
+  blas_threads: 8
+  batch_max_parallel: 8
+
+run:
+  output_dir: ./output
+  max_outer_iterations: 100
+  no_progress_iterations: 2
+
+logging:
+  level: INFO
+  log_dir: ./output/logs
+  jsonl_file: interactions.jsonl
+  text_file: transcript.txt
+  rich_console: true
+  slack_webhook_url: null
+  slack_truncate: true
+  terminal_truncate: true

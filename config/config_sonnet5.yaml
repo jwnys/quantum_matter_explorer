@@ -1,0 +1,92 @@
+# QuantumMatterExplorer configuration: Claude Sonnet 5 (Anthropic API)
+#
+# Runs the same DMRG study as the local configs, via the Anthropic API:
+#     python main.py -i input/xxz_chain.md -c config/config_sonnet5.yaml
+#
+# Setup: put ANTHROPIC_API_KEY in .env (gitignored, auto-loaded). The key is read from
+# the environment by name, never stored in this file and never logged.
+#
+# Model-specific notes (see src/llm/provider.py _build_anthropic for the enforcement):
+#   * temperature, top_p and top_k are rejected with a 400 on Sonnet 5, so this file
+#     deliberately has no temperature key.
+#   * unlike Opus 5, thinking is NOT on by default here: adaptive is the only on-mode
+#     and omitting the parameter means no thinking, so `thinking: true` below is
+#     load-bearing rather than a restatement of a default.
+#   * context window 1,000,000 tokens, max output 128,000; multimodal (see vision below).
+
+llm:
+  provider: anthropic
+
+  # Sonnet 5 is multimodal, so the image-read guard is skipped and the agent may read
+  # its own plots. Keep this false for any text-only model.
+  vision: true
+
+  anthropic:
+    model: claude-sonnet-5
+    api_key_env: ANTHROPIC_API_KEY
+
+    context_length: 1000000
+
+    # Streaming plus a large cap: the SDK needs streaming above roughly 16k output or
+    # the request hits the HTTP timeout, and this agent emits very long single
+    # generations. 64000 leaves headroom under the 128k cap.
+    max_tokens: 64000
+    streaming: true
+
+    # low | medium | high | xhigh | max (default high).
+    reasoning_effort: high
+
+    # Adaptive thinking, with the reasoning summary returned so the agent's reasoning
+    # can be inspected after the run.
+    thinking: true
+    thinking_display: summarized
+
+    request_timeout: 1800
+    max_retries: 5
+
+agent:
+  # Absolute compaction budget: 0.85 of the 1M window.
+  max_input_tokens: 850000
+  rate_limit_retry: 6
+  # A local pacing hint only; the SDK reads retry-after from the 429 itself.
+  tokens_per_minute: 400000
+  recursion_limit: 100000
+  enable_data_analyst: true
+  enable_physics_critic: true
+  enable_skills: true
+  thinking_mode: false                # the <|think|> prepend is Gemma-only
+  enable_path_guard: true
+  enable_edit_reground: true
+  enable_nudges: true
+  nudge_every_k: 4
+  nudge_loop_k: 6
+  nudge_thrash_k: 8
+  nudge_summary_k: 6
+  human_in_the_loop: false
+  hitl_timeout_minutes: 720
+  hitl_notify_urls: []
+
+julia:
+  executable: julia
+  depot_path: null
+  itensor_libraries_dir: third_party
+  run_timeout_seconds: 600
+  project_dir: output/julia_project
+  threads: 8
+  blas_threads: 8
+  batch_max_parallel: 8
+
+run:
+  output_dir: ./output
+  max_outer_iterations: 100
+  no_progress_iterations: 2
+
+logging:
+  level: INFO
+  log_dir: ./output/logs
+  jsonl_file: interactions.jsonl
+  text_file: transcript.txt
+  rich_console: true
+  slack_webhook_url: null
+  slack_truncate: true
+  terminal_truncate: true

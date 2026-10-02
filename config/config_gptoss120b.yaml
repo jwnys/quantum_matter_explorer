@@ -1,0 +1,97 @@
+# QuantumMatterExplorer configuration: gpt-oss-120b (MoE, local vLLM)
+#
+# Runs OpenAI's open-weight gpt-oss-120b as the agent model:
+#     python main.py -i input/xxz_chain.md -c config/config_gptoss120b.yaml
+#
+# The model is 117B total / 5.1B active parameters, released as MXFP4-quantised MoE
+# weights of roughly 58 GB, and per the model card fits on a single 80 GB GPU. Two
+# GPUs are used below so the KV cache has headroom at the full 128K context.
+#
+# Parsers (names verified against vLLM 0.21.0):
+#   * tool_call_parser: openai. gpt-oss emits tool calls in the harmony/openai format,
+#     not hermes-style; with the wrong parser, tool calls silently stay in the message
+#     text and it looks like the model never calls tools.
+#   * reasoning_parser: openai_gptoss. gpt-oss always emits a reasoning trace; without
+#     this parser the trace is concatenated into the answer. Note the registered name
+#     is `openai_gptoss`, not `gptoss` (the wrong name is a hard KeyError at startup).
+
+llm:
+  provider: vllm
+
+  vllm:
+    model: openai/gpt-oss-120b         # HF repo id; ~58 GB MXFP4 (first launch downloads it)
+    context_length: 131072             # the model's native 128K
+    gpu_id: "0,1"                      # weights fit on one modern GPU; the second buys
+                                       # KV-cache headroom at 128K
+    tensor_parallel_size: 2
+    base_url: http://localhost:11439
+    gpu_memory_utilization: 0.90
+
+    # Sampling matches OpenAI's own evaluation harness for gpt-oss: temperature 1.0
+    # with no nucleus or top-k truncation (top_p 1.0 and top_k -1 are the no-op
+    # values). The model card and cookbook give no recommended sampling, so the eval
+    # harness is the reference of record.
+    temperature: 1.0
+    top_p: 1.0
+    top_k: -1                          # disabled; vLLM-only param, forwarded via extra_body
+    min_p: 0.0
+
+    auto_launch: true
+    server_python: null                # python of the vLLM venv ($QME_VLLM_PYTHON / python3)
+    download_dir: null                 # null = standard Hugging Face cache
+    launch_timeout_seconds: 1800       # 58 GB download on first launch plus MXFP4 load
+    enforce_eager: false
+    tool_call_parser: openai
+    # Harmony reasoning level: a real vLLM request field that is written into the
+    # structured slot of the harmony system message vLLM renders. The default is
+    # medium, so leaving it unset silently runs the model at medium. Do not instead
+    # prepend "Reasoning: high" to the system prompt: that text lands in the
+    # instructions section, not the reasoning slot.
+    reasoning_effort: high
+    reasoning_parser: openai_gptoss
+    startup_cleanup: own
+
+agent:
+  summary_headroom: 0.85               # compensates the approximate token counting;
+                                       # see src/agent.py set_summarization_profile
+  recursion_limit: 100000
+  enable_data_analyst: true
+  enable_physics_critic: true
+  enable_skills: true
+  thinking_mode: false                 # the <|think|> prepend is Gemma-only; gpt-oss
+                                       # reasons natively, separated by the reasoning parser
+  enable_path_guard: true
+  enable_edit_reground: true
+  enable_nudges: true
+  nudge_every_k: 4
+  nudge_loop_k: 6
+  nudge_thrash_k: 8
+  nudge_summary_k: 6
+  human_in_the_loop: false
+  hitl_timeout_minutes: 720
+  hitl_notify_urls: []
+
+julia:
+  executable: julia
+  depot_path: null
+  itensor_libraries_dir: third_party
+  run_timeout_seconds: 600
+  project_dir: output/julia_project
+  threads: 8
+  blas_threads: 8
+  batch_max_parallel: 8
+
+run:
+  output_dir: ./output
+  max_outer_iterations: 100
+  no_progress_iterations: 2
+
+logging:
+  level: INFO
+  log_dir: ./output/logs
+  jsonl_file: interactions.jsonl
+  text_file: transcript.txt
+  rich_console: true
+  slack_webhook_url: null
+  slack_truncate: true
+  terminal_truncate: true

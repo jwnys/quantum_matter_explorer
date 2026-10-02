@@ -1,0 +1,21 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+
+\section*{Randomized Ising model}
+
+On a 1d chain, we consider the following Hamiltonian for the Ising model with random couplings and random fields:
+\begin{equation}
+H = - \sum_{<i,j>} J_{ij} S^z_i S^z_j + \sum_{i} h_i S^x_i
+\end{equation}
+where $J_{ij}$ are random nearest-neighbour couplings and $h_i$ are random local fields.
+The ranges are:
+- $J_{ij} \in \mathcal{U}[0, 1]$
+- $h_i \in \mathcal{U}[0, h_{\max}]$
+with $\mathcal{U}[a, b]$ denoting the uniform distribution over the interval $[a, b]$.
+In other words, the couplings and fields are drawn independently from uniform distributions.
+The system is therefore also not translationally invariant.
+
+Study the model for different values of $h_{\max}$ and system sizes.
+
+\end{document}

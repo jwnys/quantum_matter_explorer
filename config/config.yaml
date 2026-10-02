@@ -1,0 +1,135 @@
+# QuantumMatterExplorer configuration (default: local vLLM serving Gemma-4-31B)
+
+# LLM provider. build_llm(cfg["llm"]) returns a LangChain chat model that is passed
+# straight to the deep agent. Providers: vllm | openai | anthropic | groq | deepseek |
+# openai_compatible. Cloud providers read their API key from the environment variable
+# named by api_key_env (put it in .env, which is gitignored and auto-loaded).
+llm:
+  provider: vllm
+
+  # Set true only for a model that accepts images. When false, an image-read guard is
+  # installed so the agent cannot send a plot to a text-only endpoint (which would fail
+  # the run with an unrecoverable 400).
+  vision: false
+
+  vllm:
+    model: google/gemma-4-31B-it       # HF repo id or local weights path (gated: accept the
+                                       # license on Hugging Face and set HF_TOKEN in .env)
+    # Served context window (vLLM --max-model-len). 262144 is the model's native maximum.
+    # Lower this if the KV cache does not fit at startup.
+    context_length: 262144
+    gpu_id: "0,1"                      # CUDA_VISIBLE_DEVICES for the server; two GPUs here
+                                       # means tensor_parallel_size defaults to 2
+    base_url: http://localhost:11436   # a busy port is resolved to the next free one
+    gpu_memory_utilization: 0.92
+    temperature: 1.0
+    top_p: 0.95
+    top_k: 64
+    auto_launch: true                  # main.py launches and stops its own vLLM server
+    # Python executable of the environment where vllm is installed (the server venv).
+    # null uses $QME_VLLM_PYTHON if set, else "python3" from PATH.
+    server_python: null
+    # Where model weights are downloaded and cached. null uses the standard Hugging Face
+    # cache (~/.cache/huggingface), so weights you already have are reused.
+    download_dir: null
+    launch_timeout_seconds: 900        # large weights take a while to load
+    enforce_eager: false
+    # Gemma emits tool calls in its native special-token format; these parsers are required
+    # for tool calling to work and to keep the thinking trace out of response.content.
+    # For other model families set the parsers that ship with vLLM for that family.
+    tool_call_parser: gemma4
+    reasoning_parser: gemma4
+    # own  = at startup, reap only a server left behind by a previous run of this job
+    #        (tracked via a pid file), so parallel runs on different GPUs coexist.
+    # all  = kill every vLLM process owned by this user. none = touch nothing.
+    startup_cleanup: own
+
+  # Cloud providers. See config/config_opus5.yaml etc. for tuned per-model configs.
+  openai:
+    model: gpt-4o
+    api_key_env: OPENAI_API_KEY
+    temperature: 0.2
+  anthropic:
+    model: claude-opus-5
+    api_key_env: ANTHROPIC_API_KEY
+  groq:
+    model: llama-3.3-70b-versatile
+    api_key_env: GROQ_API_KEY
+    temperature: 0.2
+  openai_compatible:
+    model: default
+    base_url: http://localhost:8000/v1
+    api_key: EMPTY
+    temperature: 0.2
+
+# Deep-agent knobs.
+agent:
+  # Context compaction fires at 85% of the model profile set from context_length.
+  # summary_headroom shaves the window first (approximate token counting reads low, so
+  # compaction must fire early); max_input_tokens sets an absolute budget instead and
+  # wins when both are given.
+  summary_headroom: 0.85
+  recursion_limit: 100000             # internal graph steps per invoke; a generous backstop
+  enable_data_analyst: true           # subagent that summarizes large data files
+  enable_physics_critic: true        # independent reviewer subagent (plan + results review)
+  enable_skills: true                 # load skills/*/SKILL.md via progressive disclosure
+  enable_skill_gate: true             # block a tool once until its load-bearing skill is read
+                                      # (model-setup before a production run, itensor-dmrg
+                                      # before writing .jl, ed-validation before an ED script,
+                                      # reporting before finish)
+  thinking_mode: true                 # Gemma only: prepend <|think|> to the system prompt
+  enable_path_guard: true             # rewrite virtual /data, /plots, ... paths in `execute`
+                                      # commands and redirect host-wide scans
+  enable_edit_reground: true          # on a failed edit_file, return the file's current
+                                      # content and block the identical retry
+  enable_nudges: true                 # soft reminders when outputs go stale
+  nudge_every_k: 4                    # nudge after this many DMRG runs without a note update
+  nudge_loop_k: 6                     # nudge after this many run_julia calls with no new data
+  nudge_thrash_k: 8                   # nudge after this many edits of one file without running it
+  nudge_summary_k: 6                  # nudge after this many DMRG runs without update_run_summary
+  # Optional provider pacing (both off by default):
+  #   rate_limit_retry: 6             # retry a 429 up to N times, honoring the advertised wait
+  #   tokens_per_minute: 400000       # local token budget per rolling minute
+  # Human-in-the-loop: pause for review of plan.md and of the final note before finish.
+  # Off = fully autonomous. Also available per run as --hitl / --no-hitl.
+  human_in_the_loop: false
+  hitl_timeout_minutes: 720           # auto-proceed if no human responds (0 = wait forever)
+  hitl_notify_urls: []                # optional webhook URLs (ntfy.sh topic, Slack webhook)
+                                      # pinged when a review is requested
+
+# Julia / ITensor. See docs/INSTALL_JULIA.md and docs/setup_julia.sh.
+julia:
+  executable: julia                   # path to the Julia binary (a plain official binary;
+                                      # avoid the juliaup shim, whose self-update lock can
+                                      # serialize launches)
+  depot_path: null                    # null = the default depot (~/.julia); point it at a
+                                      # local disk on machines where $HOME is networked
+  itensor_libraries_dir: third_party  # ITensor sources for the lookup_doc tool
+                                      # (clone with docs/download_libraries.sh; optional)
+  run_timeout_seconds: 600            # per-DMRG-call wall clock; a full run needs minutes
+  project_dir: output/julia_project   # Julia project with ITensorMPS/JSON3/XDiag
+                                      # (provisioned by docs/setup_julia.sh)
+  threads: 8                          # Julia threads per DMRG process
+  blas_threads: 8
+  batch_max_parallel: 8               # concurrent points in run_julia_batch; each point uses
+                                      # `threads` cores, so keep the product within the machine
+
+# Run parameters. The driver re-invokes a yielded-but-unfinished agent; each outer
+# iteration is a full agent run, and the loop ends early when the agent calls `finish`,
+# makes no progress for no_progress_iterations, or yields with no tool calls. A healthy
+# run uses a handful of iterations; the cap is a runaway backstop.
+run:
+  output_dir: ./output
+  max_outer_iterations: 100
+  no_progress_iterations: 2
+
+# Logging: full transcript plus per-event stats.
+logging:
+  level: INFO                    # DEBUG | INFO | WARNING
+  log_dir: ./output/logs
+  jsonl_file: interactions.jsonl
+  text_file: transcript.txt
+  rich_console: true
+  slack_webhook_url: null        # optional: mirror interactions to a Slack webhook
+  slack_truncate: true
+  terminal_truncate: true

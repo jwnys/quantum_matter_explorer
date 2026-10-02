@@ -1,0 +1,39 @@
+[project]
+name = "quantummatterexplorer"
+version = "1.0.0"
+description = "A deep agent for autonomous discovery of quantum many-body phases of matter (DMRG via ITensorMPS)."
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [
+  { name = "Jannes Nys" },
+  { name = "Andrew Jreissaty" },
+  { name = "Juan Carrasquilla" },
+]
+
+# The vLLM server runs in a separate environment (requirements-vllm.txt), so this
+# environment is the LangChain client, deepagents, and the scientific stack only.
+dependencies = [
+  "deepagents==0.6.12",
+  # deepagents pulls langchain, langchain-core, langgraph, langchain-anthropic,
+  # langsmith and wcmatch at compatible versions.
+  "langchain-openai>=1.2",    # vLLM / OpenAI-compatible endpoints + cloud OpenAI
+  "numpy>=2.0",
+  "scipy>=1.13",
+  "matplotlib>=3.9",
+  "pandas>=2.2",
+  "h5py>=3.11",
+  "pyyaml>=6.0",
+  "rich>=13.7",
+  "typer>=0.12",
+  "python-dotenv>=1.0",
+  "httpx>=0.27",
+  "psutil>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+# Serving a local model in the same environment: pip install -e ".[vllm]"
+vllm = ["vllm==0.21.0", "flashinfer-python==0.6.8.post1"]
+
+[tool.setuptools]
+packages = { find = { include = ["src*"] } }
