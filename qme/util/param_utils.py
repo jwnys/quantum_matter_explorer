@@ -1,5 +1,5 @@
 """
-src/util/param_utils.py
+qme/util/param_utils.py
 
 Helpers that keep Hamiltonian parameters concrete and numeric.
 

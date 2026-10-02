@@ -1,5 +1,5 @@
 """
-src/tools/python_exec.py
+qme/tools/python_exec.py
 
 The `run_python` tool, for the agent's analysis and plotting scripts.
 

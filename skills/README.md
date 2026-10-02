@@ -12,7 +12,7 @@ how to change them.
 
 ## How the whole thing is arranged
 
-The system prompt in `src/prompts.py` holds control flow: the stages, the rules that always apply,
+The system prompt in `qme/prompts.py` holds control flow: the stages, the rules that always apply,
 and how to operate the workspace. Everything else lives here.
 
 The division is deliberate and worth stating precisely, because getting it wrong has already cost
@@ -116,7 +116,7 @@ size is more useful than one that sounds equally confident about everything.
 
 1. **Find the stage it belongs to** from the table above. If it does not belong to one, it is
    probably an invariant that holds everywhere, which means it belongs in the non-negotiables in
-   `src/prompts.py` rather than here.
+   `qme/prompts.py` rather than here.
 2. **Put it in that file, and only that file.** If it seems to belong in two, it is two rules.
 3. **Say what goes wrong without it.** If you cannot, it may not be a rule yet.
 4. **Give it an ID** if it is a decision step, following the local scheme (`D1`, `E2`, and so on).

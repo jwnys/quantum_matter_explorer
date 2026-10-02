@@ -1,5 +1,5 @@
 """
-src/agent.py
+qme/agent.py
 Assemble the single deep agent: one research agent plus its tools, subagents,
 and middleware.
 
@@ -34,16 +34,16 @@ from langchain.agents.middleware.types import AgentMiddleware
 from deepagents.middleware._utils import append_to_system_message
 from langgraph.checkpoint.memory import InMemorySaver
 
-from src.llm.provider import resolve_agent_provider
-from src.tools.julia import run_julia, run_julia_batch
-from src.tools.python_exec import run_python
-from src.tools.helpers import validate, lookup_doc, update_run_summary, finish
-from src.context_guard import ContextOverflowClassifier
-from src.image_guard import ImageReadGuard
-from src.tool_error_guard import ToolErrorGuard
-from src.rate_limit import RateLimitRetryMiddleware, TokenRateLimitMiddleware
-from src.tools.hitl import request_plan_review, request_review, PLAN_REVIEWED
-from src.prompts import (
+from qme.llm.provider import resolve_agent_provider
+from qme.tools.julia import run_julia, run_julia_batch
+from qme.tools.python_exec import run_python
+from qme.tools.helpers import validate, lookup_doc, update_run_summary, finish
+from qme.context_guard import ContextOverflowClassifier
+from qme.image_guard import ImageReadGuard
+from qme.tool_error_guard import ToolErrorGuard
+from qme.rate_limit import RateLimitRetryMiddleware, TokenRateLimitMiddleware
+from qme.tools.hitl import request_plan_review, request_review, PLAN_REVIEWED
+from qme.prompts import (
     MAIN_SYSTEM_PROMPT,
     HITL_PROMPT_SNIPPET,
     DATA_ANALYST_PROMPT,
@@ -695,7 +695,7 @@ def _register_safety_profile(model: BaseChatModel, cfg: dict[str, Any]) -> bool:
 
     ToolErrorGuard is registered here too, and is the broadest of the three: langgraph
     re-raises any tool exception that is not a ToolException, so a malformed tool
-    argument would otherwise end the whole study. See src/tool_error_guard.py for what
+    argument would otherwise end the whole study. See qme/tool_error_guard.py for what
     it deliberately does not catch; that exclusion list is load-bearing.
 
     Returns True when the profile was registered.
@@ -735,7 +735,7 @@ def build_agent(cfg: dict[str, Any], run_dir, model: BaseChatModel):
     # Rate-limit retry: off unless the config asks for it. `agent.rate_limit_retry: N`
     # enables it with N attempts per model call; 0 or absent means disabled, and a 429
     # fails the run as before. Off by default because a misconfigured limit would turn a
-    # fast, loud failure into a silent multi-minute stall. See src/rate_limit.py.
+    # fast, loud failure into a silent multi-minute stall. See qme/rate_limit.py.
     _rate_limit_attempts = int(agent_cfg.get("rate_limit_retry", 0) or 0)
 
     # Proactive token budget: also off unless asked for. `agent.tokens_per_minute: N`
@@ -854,7 +854,7 @@ def build_agent(cfg: dict[str, Any], run_dir, model: BaseChatModel):
     # Wait out a provider rate limit (429) instead of dying on it. Disabled unless
     # `agent.rate_limit_retry: N` is set. These catch disjoint errors from the overflow
     # classifier: a rate limit here, a context overflow there, so both recoveries stay
-    # reachable. See src/rate_limit.py for why the openai SDK's own max_retries cannot
+    # reachable. See qme/rate_limit.py for why the openai SDK's own max_retries cannot
     # cover a rolling-minute token window on its own.
     middleware.extend(_rate_limit_mw())
 
@@ -904,7 +904,7 @@ def build_agent(cfg: dict[str, Any], run_dir, model: BaseChatModel):
     # harmony library. Text prepended to this system prompt would land in the
     # instructions section instead and not set that slot. The setting therefore lives
     # with the model, in llm.vllm.reasoning_effort, and is forwarded by
-    # src/llm/provider._build_vllm.
+    # qme/llm/provider._build_vllm.
 
     checkpointer = InMemorySaver()
     agent = create_deep_agent(

@@ -1,7 +1,7 @@
 """Structural checks on the prompt and the skill library.
 
 The checks are cheap and run in a second, so run them after any edit to
-`src/prompts.py` or `skills/`.
+`qme/prompts.py` or `skills/`.
 
     python tools/check_skills.py
 
@@ -23,7 +23,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
-PROMPTS = ROOT / "src" / "prompts.py"
+PROMPTS = ROOT / "qme" / "prompts.py"
 
 FAILURES: list[str] = []
 

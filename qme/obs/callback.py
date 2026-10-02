@@ -1,5 +1,5 @@
 """
-src/obs/callback.py
+qme/obs/callback.py
 
 DeepAgentCallbackHandler bridges LangChain/LangGraph callback events into the
 project's loggers (full transcript plus per-event stats).

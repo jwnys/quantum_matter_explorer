@@ -15,7 +15,7 @@ import openai
 from langchain_core.exceptions import ContextOverflowError
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from src.context_guard import (  # noqa: E402
+from qme.context_guard import (  # noqa: E402
     ContextOverflowClassifier,
     is_context_overflow_message,
 )

@@ -211,7 +211,7 @@ the whole tool is read-only with respect to the run.
 ### Inspecting a run
 
 ```bash
-.venv/bin/python -m src.analysis output/run_20260101_120000
+.venv/bin/python -m qme.analysis output/run_20260101_120000
 ```
 
 prints an overview (tool usage, tokens, timing, data points) and saves diagnostic
@@ -232,26 +232,26 @@ happens in plain Markdown and YAML rather than in code.
 - **New problems are new input files.** An input spec is a short Markdown or LaTeX
   document stating the Hamiltonian, the operators, and the parameter ranges to
   explore. The files in `input/` are the templates to copy.
-- **The system prompt** (`src/prompts.py`) carries the workflow and the
+- **The system prompt** (`qme/prompts.py`) carries the workflow and the
   non-negotiable rules, including the prompts of the data-analyst and physics-critic
   subagents.
 - **Another backbone** is a config file away if it speaks an existing API, or one
-  builder function in `src/llm/provider.py` if it does not.
+  builder function in `qme/llm/provider.py` if it does not.
 - **Another domain entirely** is also within reach: the harness (planning, skills,
   gates, critics, run driver) is not specific to DMRG. Swap the simulation tool in
-  `src/tools/`, the skill library and the prompts, and the same machinery drives a
+  `qme/tools/`, the skill library and the prompts, and the same machinery drives a
   different instrument.
 
 ## Repository layout
 
 ```
 main.py                  entry point: run folder, server lifecycle, run driver
-src/agent.py             deep-agent assembly: tools, subagents, middleware
-src/prompts.py           system prompt + subagent prompts
-src/tools/               run_julia, run_julia_batch, run_python, validate, ...
-src/llm/                 provider layer (vLLM server manager, cloud builders)
-src/obs/                 logging: transcript, stats, subagent records
-src/analysis.py          post-hoc run inspection (plots, summaries)
+qme/agent.py             deep-agent assembly: tools, subagents, middleware
+qme/prompts.py           system prompt + subagent prompts
+qme/tools/               run_julia, run_julia_batch, run_python, validate, ...
+qme/llm/                 provider layer (vLLM server manager, cloud builders)
+qme/obs/                 logging: transcript, stats, subagent records
+qme/analysis.py          post-hoc run inspection (plots, summaries)
 skills/                  the method, one skill per stage of a study
 input/                   example Hamiltonian specs
 config/                  per-model configurations

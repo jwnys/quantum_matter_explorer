@@ -1,5 +1,5 @@
 """
-src/analysis.py
+qme/analysis.py
 
 Read-only toolkit to load and visualize a single deep-agent run's trajectory and
 statistics: per-point `data/*.json`, plus deep-agent signals (tool timeline,
@@ -15,7 +15,7 @@ Reads the structured logs written by `StatsLogger` (`logs/stats.jsonl`) and
               plot_time_split / plot_progress / plot_physics / plot_errors / plot_todos  (one Figure each)
   orchestr. : analyze_run(run_dir), which prints the overview and saves all plots + todos.txt
 
-CLI:  python -m src.analysis <run_folder> [--out DIR]
+CLI:  python -m qme.analysis <run_folder> [--out DIR]
 """
 
 from __future__ import annotations

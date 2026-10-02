@@ -53,7 +53,7 @@ llm:
 
 agent:
   summary_headroom: 0.85               # compensates the approximate token counting;
-                                       # see src/agent.py set_summarization_profile
+                                       # see qme/agent.py set_summarization_profile
   recursion_limit: 100000
   enable_data_analyst: true
   enable_physics_critic: true

@@ -1,5 +1,5 @@
 """
-src/obs/stats_logger.py
+qme/obs/stats_logger.py
 
 Structured per-event metrics writer.
 

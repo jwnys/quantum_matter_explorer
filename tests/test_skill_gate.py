@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from src.agent import SkillGateMiddleware  # noqa: E402
+from qme.agent import SkillGateMiddleware  # noqa: E402
 
 
 def call(name, **args):

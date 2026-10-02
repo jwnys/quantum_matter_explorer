@@ -1,5 +1,5 @@
 """
-src/tool_error_guard.py
+qme/tool_error_guard.py
 
 Hand a tool's unhandled exception back to the agent as text, instead of ending the run.
 
@@ -14,7 +14,7 @@ from, so this guard removes that one asymmetry rather than special-casing indivi
 It cannot be fixed in the tool. The built-in tools belong to deepagents in site-packages, which
 is outside this repo and would be overwritten by a reinstall, and neither `create_deep_agent`
 nor `create_agent` exposes a `handle_tool_errors` parameter. So it is caught from outside, in
-the same `wrap_tool_call` hook `src/agent.py` already uses.
+the same `wrap_tool_call` hook `qme/agent.py` already uses.
 
 What it must not swallow. Some exceptions are not a tool reporting bad input, they are the
 framework signalling something. All of them are `Exception` subclasses, so a bare
@@ -26,14 +26,14 @@ framework signalling something. All of them are `Exception` subclasses, so a bar
   * `GraphRecursionError`, the loop limit. Swallowing it lets the agent loop past its own limit.
   * `NodeCancelledError`. Swallowing it means a cancelled run keeps running.
   * `ContextOverflowError`. `ContextOverflowClassifier` exists in order to raise this so
-    deepagents' trim-and-retry recovery can catch it (src/context_guard.py). It reaches a tool
+    deepagents' trim-and-retry recovery can catch it (qme/context_guard.py). It reaches a tool
     call because the subagent tool runs a whole sub-agent that makes model calls, so swallowing
     it here would quietly disable that guard.
 
 `KeyboardInterrupt` and `SystemExit` derive from `BaseException`, so `except Exception` already lets
 them through. Do not widen to `BaseException`.
 
-Registered on the harness profile in `src/agent.py:_register_safety_profile`, not appended per
+Registered on the harness profile in `qme/agent.py:_register_safety_profile`, not appended per
 agent, for the reason that function's docstring gives: deepagents auto-creates a
 `general-purpose` subagent with its own middleware list that per-agent appends keep missing.
 """
@@ -75,7 +75,7 @@ def _resolve_passthrough() -> tuple[type[BaseException], ...]:
 
 class ToolErrorGuard(AgentMiddleware):
     """Turn an unhandled tool exception into an ordinary error `ToolMessage`, so the agent can fix
-    its arguments and keep going. Mirrors SkillGateMiddleware.wrap_tool_call (src/agent.py)."""
+    its arguments and keep going. Mirrors SkillGateMiddleware.wrap_tool_call (qme/agent.py)."""
 
     def __init__(self) -> None:
         super().__init__()

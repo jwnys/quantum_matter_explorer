@@ -1,5 +1,5 @@
 """
-src/llm/provider.py
+qme/llm/provider.py
 Provider-agnostic LLM factory.
 
 Supports:

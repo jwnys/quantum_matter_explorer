@@ -1,5 +1,5 @@
 """
-src/tools/helpers.py
+qme/tools/helpers.py
 
 Small custom tools for the deep agent:
 

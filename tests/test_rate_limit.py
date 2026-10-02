@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.rate_limit import (                                    # noqa: E402
+from qme.rate_limit import (                                    # noqa: E402
     RateLimitRetryMiddleware, is_rate_limit_error, retry_after_seconds, exceeds_limit_alone,
 )
 
@@ -124,7 +124,7 @@ def test_async_path_does_not_block_the_event_loop():
 
 
 # Proactive limiter.
-from src.rate_limit import (                                    # noqa: E402
+from qme.rate_limit import (                                    # noqa: E402
     TokenRateLimiter, TokenRateLimitMiddleware, get_limiter, reset_limiters,
     estimate_request_tokens,
 )

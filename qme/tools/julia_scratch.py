@@ -1,5 +1,5 @@
 """
-src/tools/julia_scratch.py
+qme/tools/julia_scratch.py
 
 A persistent Julia subprocess the agent can poke at, the human "open the
 REPL and try a small thing first" workflow.

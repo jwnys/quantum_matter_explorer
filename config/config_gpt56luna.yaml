@@ -60,11 +60,11 @@ agent:
   # this model's 1.05M window would give a wildly different budget than the same
   # fraction of a 262K local window, which matters when comparing backbones.
   max_input_tokens: 222822
-  # Wait out a provider 429 instead of dying on it (src/rate_limit.py). N attempts per
+  # Wait out a provider 429 instead of dying on it (qme/rate_limit.py). N attempts per
   # model call, with escalating waits. A persistent limit still raises after the last
   # attempt, so this cannot mask a real failure.
   rate_limit_retry: 6
-  # Proactive token budget (src/rate_limit.py): model calls are throttled so the
+  # Proactive token budget (qme/rate_limit.py): model calls are throttled so the
   # rolling 60 s window never knowingly exceeds this. Set it to your organisation's
   # actual TPM cap, and lower it if 429s still show up in the run log (the pre-call
   # token figure is an estimate, and the quota is shared across the API key).

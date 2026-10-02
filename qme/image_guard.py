@@ -1,11 +1,11 @@
 """
-src/image_guard.py
+qme/image_guard.py
 
 Stop the agent reading its own plot images into the LLM context.
 
 deepagents' FilesystemMiddleware auto-encodes image files (.png/.jpg/...) as multimodal blocks
 (base64) when read via `read_file`. On a vision-disabled vLLM server (served
-`--language-model-only`, src/llm/vllm.py) that image is rejected with `openai.BadRequestError
+`--language-model-only`, qme/llm/vllm.py) that image is rejected with `openai.BadRequestError
 400: "At most 0 image(s) may be provided in one prompt."`, an unhandled 400 that crashes the
 run (main.py). It cannot be recovered by retrying, because the image persists in the message
 history and the same 400 recurs, so it has to be prevented instead.
@@ -36,7 +36,7 @@ def is_image_path(path: str) -> bool:
 class ImageReadGuard(AgentMiddleware):
     """Intercept `read_file` on an image file and return a text stub instead of letting deepagents emit
     a multimodal block, so a vision-disabled server never receives an image. Any other tool call passes
-    straight through. Mirrors SkillGateMiddleware.wrap_tool_call (src/agent.py)."""
+    straight through. Mirrors SkillGateMiddleware.wrap_tool_call (qme/agent.py)."""
 
     def wrap_tool_call(self, request, handler):
         tc = request.tool_call or {}

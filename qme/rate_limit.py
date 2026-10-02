@@ -1,5 +1,5 @@
 """
-src/rate_limit.py
+qme/rate_limit.py
 
 Stay under a provider's tokens-per-minute cap. Two independent mechanisms, both opt-in:
 

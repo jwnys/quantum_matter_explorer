@@ -1,5 +1,5 @@
 """
-src/obs/logger.py
+qme/obs/logger.py
 
 Structured logger that records every prompt/response exchanged in the system.
 

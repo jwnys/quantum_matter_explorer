@@ -1,5 +1,4 @@
 # Run outputs and caches
-.github/
 output/*
 models/
 third_party/

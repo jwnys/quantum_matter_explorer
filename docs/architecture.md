@@ -10,9 +10,9 @@ note with figures.
 
 ## The single agent
 
-`src/agent.py::build_agent` wires `deepagents.create_deep_agent` with:
+`qme/agent.py::build_agent` wires `deepagents.create_deep_agent` with:
 
-- **Model**: any provider via `src/llm/provider.py::build_llm` (default: a local vLLM
+- **Model**: any provider via `qme/llm/provider.py::build_llm` (default: a local vLLM
   server). Before use, `model.profile["max_input_tokens"]` is set from the configured
   context length so summarization triggers at a fraction of the window rather than at
   a fixed token count.
@@ -60,7 +60,7 @@ The three crash guards (`ContextOverflowClassifier`, `ToolErrorGuard`,
 appended per agent, because that is the only route that also covers the auto-created
 `general-purpose` subagent. The optional rate-limit middleware is appended per agent.
 
-## Tools (`src/tools/`)
+## Tools (`qme/tools/`)
 
 | Tool | Role |
 |---|---|

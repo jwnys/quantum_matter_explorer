@@ -6,7 +6,7 @@
 # Setup: put ANTHROPIC_API_KEY in .env (gitignored, auto-loaded). The key is read from
 # the environment by name, never stored in this file and never logged.
 #
-# Model-specific notes (see src/llm/provider.py _build_anthropic for the enforcement):
+# Model-specific notes (see qme/llm/provider.py _build_anthropic for the enforcement):
 #   * temperature, top_p and top_k are rejected with a 400 on Sonnet 5, so this file
 #     deliberately has no temperature key.
 #   * unlike Opus 5, thinking is NOT on by default here: adaptive is the only on-mode

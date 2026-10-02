@@ -1,5 +1,5 @@
 """
-src/prompts.py
+qme/prompts.py
 The prompts. Everything here is soft guidance except the handful of objective
 tool guards. The deepagents base prompt (concise behavior, filesystem, offload
 and subagent mechanics) is appended automatically, so these prompts focus on

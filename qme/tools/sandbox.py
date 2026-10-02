@@ -1,5 +1,5 @@
 """
-src/tools/sandbox.py
+qme/tools/sandbox.py
 
 Write-sandbox for the agent's tools. Reads are unrestricted (full filesystem).
 Writes must land inside `$QME_RUN_DIR`, the timestamped output folder for the

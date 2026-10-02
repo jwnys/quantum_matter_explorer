@@ -336,7 +336,7 @@ def main() -> int:
                 break
         try:
             import yaml
-            from src.llm.provider import build_llm
+            from qme.llm.provider import build_llm
             cfg = yaml.safe_load(Path(cfg_path).read_text(encoding="utf-8"))
             if a.provider:                       # same override shape as main.py
                 cfg.setdefault("llm", {})["provider"] = a.provider

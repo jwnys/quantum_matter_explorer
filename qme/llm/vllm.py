@@ -1,5 +1,5 @@
 """
-src/llm/vllm.py
+qme/llm/vllm.py
 Manages a standalone vLLM server subprocess: launch, health checks, model
 warm-up, and clean shutdown. The server runs from the current environment when
 vllm is installed in it, or from a separate one named by `python_bin`.

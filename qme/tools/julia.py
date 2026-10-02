@@ -1,5 +1,5 @@
 """
-src/tools/julia.py
+qme/tools/julia.py
 The `run_julia` tool, the project's DMRG instrument (ITensorMPS via Julia),
 with two hard guards (objective, cheap, high cost if violated):
 

@@ -116,7 +116,7 @@ investigator's write-up.
 
 # Two ways to continue a run. The gated variant waits for a human at the plan checkpoint. The
 # unattended variant takes the brief up front and runs straight through. The distinction matters
-# because `request_plan_review` is only registered when human_in_the_loop is on (src/agent.py),
+# because `request_plan_review` is only registered when human_in_the_loop is on (qme/agent.py),
 # so telling an unattended run to call it points it at a tool that does not exist.
 FIRST_ACTION_GATED = """FIRST ACTION, before any compute: write a fresh `plan.md` for this continuation, starting from
 `plan_previous.md` (theirs - read it, do not edit it): what you are keeping,
@@ -397,7 +397,7 @@ def main(
         import hashlib as _hl
 
         def _fp() -> dict:
-            fp = {"prompts_sha256": _hl.sha256((repo_root / "src" / "prompts.py").read_bytes())
+            fp = {"prompts_sha256": _hl.sha256((repo_root / "qme" / "prompts.py").read_bytes())
                   .hexdigest()[:16]}
             try:
                 h = _hl.sha256()
@@ -483,7 +483,7 @@ def main(
     # QME_RUN_DIR must be set before the tools (sandbox.py) are imported.
     os.environ["QME_RUN_DIR"] = str(out)
     os.environ["QME_REPO_ROOT"] = str(repo_root)
-    # Human-in-the-loop: the review tools (src/tools/hitl.py) and the finish guard read these.
+    # Human-in-the-loop: the review tools (qme/tools/hitl.py) and the finish guard read these.
     _agent_cfg = cfg.get("agent", {}) or {}
     # hitl_on was settled above, next to the last write to cfg["agent"].
     os.environ["QME_HITL"] = "1" if hitl_on else "0"
@@ -523,12 +523,12 @@ def main(
     sys.stderr = LoggerTee(sys.stderr, term_fh)
 
     # Loggers.
-    from src.obs.logger import InteractionLogger
-    from src.obs.stats_logger import StatsLogger
+    from qme.obs.logger import InteractionLogger
+    from qme.obs.stats_logger import StatsLogger
     log_cfg = cfg.setdefault("logging", {})
     log_cfg["log_dir"] = str(out / "logs")
     ilog = InteractionLogger.initialise(log_cfg)
-    from src.agent import context_length
+    from qme.agent import context_length
     StatsLogger.initialise(out / "logs", context_window=context_length(cfg))
     ilog.info("system", f"QuantumMatterExplorer: input={input_file}, output={out}")
     if hitl_on:
@@ -546,7 +546,7 @@ def main(
     vllm_mgr = None
 
     if provider_name == "vllm" and llm_cfg.get("vllm", {}).get("auto_launch", False):
-        from src.llm.vllm import VllmServer
+        from qme.llm.vllm import VllmServer
         v = llm_cfg["vllm"]
         host = v.get("base_url", "http://localhost:11436").replace("http://", "").replace("https://", "")
         # Where model weights are downloaded/cached. Only set when configured, so an existing
@@ -575,7 +575,7 @@ def main(
 
     def _shutdown(*_a):
         ilog.info("system", "Shutting down...")
-        from src.tools.julia import shutdown_julia
+        from qme.tools.julia import shutdown_julia
         try:
             shutdown_julia()
         except Exception:
@@ -592,10 +592,10 @@ def main(
     signal.signal(signal.SIGTERM, lambda *a: (_shutdown(), sys.exit(0)))
 
     # Build model + agent (env is set, safe to import the tools now).
-    from src.llm.provider import build_llm
-    from src.agent import build_agent
-    from src.obs.callback import DeepAgentCallbackHandler
-    from src.tools.helpers import FINISHED_SENTINEL
+    from qme.llm.provider import build_llm
+    from qme.agent import build_agent
+    from qme.obs.callback import DeepAgentCallbackHandler
+    from qme.tools.helpers import FINISHED_SENTINEL
     from langchain_core.messages import HumanMessage
 
     model_obj = build_llm(llm_cfg)

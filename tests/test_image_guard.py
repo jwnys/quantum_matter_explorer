@@ -16,9 +16,9 @@ import pytest
 from langchain_core.messages import ToolMessage
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from src.image_guard import ImageReadGuard, is_image_path  # noqa: E402
+from qme.image_guard import ImageReadGuard, is_image_path  # noqa: E402
 
-SRC_AGENT = Path(__file__).resolve().parents[1] / "src" / "agent.py"
+SRC_AGENT = Path(__file__).resolve().parents[1] / "qme" / "agent.py"
 
 
 def call(name, **args):
@@ -95,7 +95,7 @@ def test_unrelated_tool_passes_through():
 
 def _registered_profiles():
     from langchain_openai import ChatOpenAI            # noqa: PLC0415
-    from src.agent import _register_safety_profile     # noqa: PLC0415
+    from qme.agent import _register_safety_profile     # noqa: PLC0415
 
     probe = ChatOpenAI(model="gpt-4o-mini", api_key="dummy", base_url="http://localhost:1")
     return probe, _register_safety_profile

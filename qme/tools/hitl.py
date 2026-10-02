@@ -1,5 +1,5 @@
 """
-src/tools/hitl.py
+qme/tools/hitl.py
 
 Optional human-in-the-loop: a simple blocking file gate with two checkpoints.
 
@@ -10,7 +10,7 @@ Each tool writes a fresh `HUMAN_REVIEW.md` in the run dir, notifies (banner + ma
 optional webhook push), and blocks until the human flips `STATUS: PENDING` to `GO` (lenient).
 It returns the human's freeform comments: empty means approve/proceed, non-empty means revise
 (the agent re-calls the tool to re-present). The whole feature is off by default. When off,
-these tools are not registered (see src/agent.py) and `finish` carries no guard.
+these tools are not registered (see qme/agent.py) and `finish` carries no guard.
 
 Design notes:
   - nohup-compatible: the human interacts purely via files, no stdin/tty needed.

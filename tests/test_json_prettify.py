@@ -1,4 +1,4 @@
-"""Contract tests for the post-run JSON normaliser in src/tools/julia.py.
+"""Contract tests for the post-run JSON normaliser in qme/tools/julia.py.
 
 Why it exists: the agent's Julia writes data with JSON3.write, which emits one line.
 deepagents' read_file is line-based, so on a single-line file every read returns the whole
@@ -18,7 +18,7 @@ import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import src.tools.julia as J  # noqa: E402
+import qme.tools.julia as J  # noqa: E402
 
 
 def _tmp_run_dir() -> Path:
