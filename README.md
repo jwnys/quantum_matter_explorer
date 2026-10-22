@@ -199,14 +199,14 @@ timed out are exactly the ones a continuation wants to reach.
 ### A readable PDF of the note
 
 ```bash
-.venv/bin/python tools/note_to_pdf.py output/run_20260101_120000
+.venv/bin/python scripts/note_to_pdf.py output/run_20260101_120000
 ```
 
 writes `report/report.tex` and `report.pdf` into the run folder. An LLM reformats
 the note into a proper document but is forbidden from touching any number or claim,
 and the output is rejected in favour of a mechanical conversion if any value from
 the note goes missing. `--no-llm` selects the mechanical conversion directly, and
-the whole tool is read-only with respect to the run.
+the whole script is read-only with respect to the run.
 
 ### Inspecting a run
 
@@ -224,10 +224,10 @@ happens in plain Markdown and YAML rather than in code.
 
 - **The skills are the method.** Everything the agent knows about running a phase
   diagram study (conventions, validation, observables, transitions, scaling,
-  reporting) lives in `skills/*/SKILL.md`, one file per stage.
-  [skills/README.md](skills/README.md) is the maintainer's guide: how the files are
+  reporting) lives in `qme/skills/*/SKILL.md`, one file per stage.
+  [qme/skills/README.md](qme/skills/README.md) is the maintainer's guide: how the files are
   written, where a new rule goes, and a glossary. Edit them, disagree with them, add
-  your group's own rules. `tools/check_skills.py` lints the library for the
+  your group's own rules. `scripts/check_skills.py` lints the library for the
   structural conventions.
 - **New problems are new input files.** An input spec is a short Markdown or LaTeX
   document stating the Hamiltonian, the operators, and the parameter ranges to
@@ -248,14 +248,14 @@ happens in plain Markdown and YAML rather than in code.
 main.py                  entry point: run folder, server lifecycle, run driver
 qme/agent.py             deep-agent assembly: tools, subagents, middleware
 qme/prompts.py           system prompt + subagent prompts
-qme/tools/               run_julia, run_julia_batch, run_python, validate, ...
+qme/tools/               the agent's tools: run_julia, run_julia_batch, run_python, validate, ...
+qme/skills/              the method, one skill per stage of a study
 qme/llm/                 provider layer (vLLM server manager, cloud builders)
 qme/obs/                 logging: transcript, stats, subagent records
 qme/analysis.py          post-hoc run inspection (plots, summaries)
-skills/                  the method, one skill per stage of a study
 input/                   example Hamiltonian specs
 config/                  per-model configurations
-tools/                   check_skills.py (skill lint), note_to_pdf.py
+scripts/                 command-line helpers: check_skills.py (skill lint), note_to_pdf.py
 tests/                   pytest suite for the guards and middleware
 docs/                    architecture, Julia install, setup scripts
 ```

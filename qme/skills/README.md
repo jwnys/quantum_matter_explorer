@@ -23,7 +23,7 @@ skill, and every other file that touches it points there rather than restating i
 
 That last part is not a style preference. The entanglement-scaling rule was once written out in
 three skills, and one of the three had the factor the wrong way round. Anyone fixing "the one file"
-would have left two stale copies behind. `tools/check_skills.py` now fails the build if a canonical
+would have left two stale copies behind. `scripts/check_skills.py` now fails the build if a canonical
 rule is stated in more than one place.
 
 The agent sees every skill's name and description at all times, and reads the body of a skill when

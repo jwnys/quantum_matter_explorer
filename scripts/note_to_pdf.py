@@ -1,8 +1,8 @@
 """Turn a finished run's research note into a readable standalone LaTeX report + PDF.
 
-    python tools/note_to_pdf.py <run_dir>
-    python tools/note_to_pdf.py <run_dir> --config config/config_opus5.yaml
-    python tools/note_to_pdf.py <run_dir> --no-llm          # mechanical, no model call
+    python scripts/note_to_pdf.py <run_dir>
+    python scripts/note_to_pdf.py <run_dir> --config config/config_opus5.yaml
+    python scripts/note_to_pdf.py <run_dir> --no-llm          # mechanical, no model call
 
 Read-only with respect to the run. Everything is written under `<run_dir>/report/`, so this can be
 pointed at a finished (or still-running) run without disturbing it, and re-run as often as you like.
@@ -70,7 +70,7 @@ Return ONLY the LaTeX. No commentary, no markdown fences.
 """
 
 COMPILE_SH = """#!/usr/bin/env bash
-# Build report.pdf, then remove the build litter. Regenerate with tools/note_to_pdf.py.
+# Build report.pdf, then remove the build litter. Regenerate with scripts/note_to_pdf.py.
 set -euo pipefail
 cd "$(dirname "$0")"
 

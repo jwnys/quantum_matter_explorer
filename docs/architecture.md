@@ -32,7 +32,7 @@ note with figures.
   `general-purpose` one. Each runs in an isolated context and returns only a final
   report. The custom subagents carry the same path-safety and edit-regrounding
   middleware as the main agent.
-- **Skills**: the files under `skills/`, one per stage of the study plus
+- **Skills**: the files under `qme/skills/`, one per stage of the study plus
   `itensor-dmrg` for code and `disorder` as a cross-cutting topic, loaded by
   progressive disclosure: only the manifest sits in the prompt, the body is read on
   demand. The system prompt carries control flow and the non-negotiable rules, the

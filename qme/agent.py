@@ -248,7 +248,7 @@ class IncrementalOutputNudge(AgentMiddleware):
 # Run-dir subdirs the agent refers to with virtual leading-slash paths (`/data/...`).
 _VIRTUAL_DIRS = ("data", "plots", "params", "scripts", "note", "logs", "skills")
 # Real on-disk skill library, used to enumerate skills when agent.skills_exclude drops some.
-_REPO_SKILLS = Path(__file__).resolve().parent.parent / "skills"
+_REPO_SKILLS = Path(__file__).resolve().parent / "skills"
 
 
 def _is_gemma(cfg: dict[str, Any]) -> bool:
@@ -871,7 +871,7 @@ def build_agent(cfg: dict[str, Any], run_dir, model: BaseChatModel):
     # `agent.skills_exclude: [itensor-dmrg]` drops named skills while keeping the rest,
     # which is useful when measuring what a single skill contributes. The existing
     # `enable_skills: false` is all-or-nothing. deepagents takes a list of skill
-    # directories, so exclusion is just building that list from the real skills/ tree
+    # directories, so exclusion is just building that list from the real qme/skills/ tree
     # minus the excluded names, rather than passing the parent directory.
     _excluded = {str(x).strip() for x in (agent_cfg.get("skills_exclude") or []) if str(x).strip()}
     if not agent_cfg.get("enable_skills", True):

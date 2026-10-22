@@ -385,7 +385,7 @@ def main(
     # Skills travel with the run so skills=["/skills"] resolves under the backend root.
     # On resume this deliberately overwrites the parent's copy: a continuation runs on the current
     # skill library, which is usually the point of continuing. The hashes of both are recorded below.
-    shutil.copytree(repo_root / "skills", out / "skills", dirs_exist_ok=True)
+    shutil.copytree(repo_root / "qme" / "skills", out / "skills", dirs_exist_ok=True)
     if input_file is not None and input_file.exists():
         shutil.copy(input_file, out / "input" / input_file.name)
     if config_file.exists():
@@ -406,7 +406,7 @@ def main(
                   .hexdigest()[:16]}
             try:
                 h = _hl.sha256()
-                for f in sorted((repo_root / "skills").glob("*/SKILL.md")):
+                for f in sorted((repo_root / "qme" / "skills").glob("*/SKILL.md")):
                     h.update(f.name.encode())
                     h.update(f.read_bytes())
                 fp["skills_sha256"] = h.hexdigest()[:16]

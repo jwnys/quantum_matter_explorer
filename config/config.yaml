@@ -72,7 +72,7 @@ agent:
   recursion_limit: 100000             # internal graph steps per invoke; a generous backstop
   enable_data_analyst: true           # subagent that summarizes large data files
   enable_physics_critic: true        # independent reviewer subagent (plan + results review)
-  enable_skills: true                 # load skills/*/SKILL.md via progressive disclosure
+  enable_skills: true                 # load qme/skills/*/SKILL.md via progressive disclosure
   enable_skill_gate: true             # block a tool once until its load-bearing skill is read
                                       # (model-setup before a production run, itensor-dmrg
                                       # before writing .jl, ed-validation before an ED script,

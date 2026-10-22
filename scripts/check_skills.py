@@ -1,9 +1,9 @@
 """Structural checks on the prompt and the skill library.
 
 The checks are cheap and run in a second, so run them after any edit to
-`qme/prompts.py` or `skills/`.
+`qme/prompts.py` or `qme/skills/`.
 
-    python tools/check_skills.py
+    python scripts/check_skills.py
 
 - DUPLICATION  A canonical rule must be stated in full in exactly one skill, the owner.
                Every other file points at the owner instead of restating the rule, so a
@@ -22,7 +22,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILLS = ROOT / "skills"
+SKILLS = ROOT / "qme" / "skills"
 PROMPTS = ROOT / "qme" / "prompts.py"
 
 FAILURES: list[str] = []
