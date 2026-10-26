@@ -98,8 +98,13 @@ def validate(code_or_path: str, language: str = "auto", timeout_s: int = 30) -> 
         return _run_validation([sys.executable, "-c", py], "python", timeout_s, stdin_text=code_text)
 
     julia_exe = os.environ.get("QME_JULIA_EXE", "julia")
+    # Meta.parseall covers the whole file (Meta.parse would stop after the first
+    # expression) and reports syntax problems as :error/:incomplete nodes rather
+    # than throwing, so both channels are checked.
     jl = ('src = read(stdin, String); '
-          'try; Meta.parse(src, 1); println("OK"); '
+          'try; ex = Meta.parseall(src); '
+          'bad = findfirst(a -> a isa Expr && a.head in (:error, :incomplete), ex.args); '
+          'if bad === nothing; println("OK"); else; println(ex.args[bad]); exit(1); end; '
           'catch e; println(e); exit(1); end')
     cmd = [julia_exe, "--startup-file=no", "--quiet", "-e", jl]
     return _run_validation(cmd, "julia", timeout_s, stdin_text=code_text)
