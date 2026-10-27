@@ -108,16 +108,32 @@ def run_python_impl(code: str, timeout_s: int = 0) -> str:
         rc = proc.returncode
     except subprocess.TimeoutExpired:
         timed_out = True
-        # Kill the group. Killing only the child leaves grandchildren running detached,
-        # which is exactly how a runaway script outlives its run.
+        # Kill the group, not just the child: killing only the child leaves
+        # grandchildren running detached, which is exactly how a runaway script
+        # outlives its run. start_new_session=True made the child the group leader,
+        # so the group id is its pid.
+        pgid = proc.pid
         try:
-            pgid = os.getpgid(proc.pid)
             os.killpg(pgid, signal.SIGTERM)
-            try:
-                proc.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                os.killpg(pgid, signal.SIGKILL)
-        except (ProcessLookupError, AttributeError):
+        except ProcessLookupError:
+            pass
+        try:
+            proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            pass
+        # The leader exiting does not mean the group is empty: a descendant that
+        # ignores SIGTERM survives it. Always follow with SIGKILL to the group;
+        # ProcessLookupError here means every member is already gone. (A process
+        # that put itself in a new session is beyond the group's reach, as with
+        # any group-based kill.) Thanks to Massimiliano Brighindi for reporting
+        # the surviving-descendant case.
+        try:
+            os.killpg(pgid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        try:
+            proc.wait(timeout=5)   # reap the leader so no zombie outlives the call
+        except subprocess.TimeoutExpired:
             pass
         stdout, stderr = "", f"(timeout after {timeout_s}s, process group killed)"
     except FileNotFoundError as exc:
