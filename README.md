@@ -4,9 +4,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![Julia 1.12](https://img.shields.io/badge/julia-1.12-9558B2.svg)](https://julialang.org/)
 [![vLLM](https://img.shields.io/badge/serving-vLLM-orange.svg)](https://github.com/vllm-project/vllm)
-<!-- Once the paper is on arXiv, add:
-[![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/XXXX.XXXXX)
--->
+[![arXiv](https://img.shields.io/badge/arXiv-2610.32001-b31b1b.svg)](https://arxiv.org/abs/2610.32001)
 
 QuantumMatterExplorer is an autonomous research agent for quantum many-body physics.
 Given a Hamiltonian it has never seen, it maps the ground-state phase diagram with
@@ -262,14 +260,18 @@ docs/                    architecture, Julia install, setup scripts
 
 ## Citation
 
-If you use this code, please cite:
+If you use this code, please cite
+[the paper](https://arxiv.org/abs/2610.32001):
 
 ```bibtex
-@article{nys2026quantummatterexplorer,
-  title  = {QuantumMatterExplorer: A Deep Agent for Autonomous Discovery of
-            Quantum Many-Body Phases of Matter},
-  author = {Nys, Jannes and Jreissaty, Andrew and Carrasquilla, Juan},
-  year   = {2026},
+@misc{nys2026quantummatterexplorerautonomousagentdiscovery,
+      title={QuantumMatterExplorer: An Autonomous Agent for the Discovery of Quantum Many-Body Phases of Matter},
+      author={Jannes Nys and Andrew Jreissaty and Juan Carrasquilla},
+      year={2026},
+      eprint={2610.32001},
+      archivePrefix={arXiv},
+      primaryClass={quant-ph},
+      url={https://arxiv.org/abs/2610.32001},
 }
 ```
 

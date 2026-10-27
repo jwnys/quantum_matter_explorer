@@ -13,7 +13,7 @@ license: Apache-2.0
 repository-code: "https://github.com/jwnys/quantum_matter_explorer"
 preferred-citation:
   type: article
-  title: "QuantumMatterExplorer: A Deep Agent for Autonomous Discovery of Quantum Many-Body Phases of Matter"
+  title: "QuantumMatterExplorer: An Autonomous Agent for the Discovery of Quantum Many-Body Phases of Matter"
   authors:
     - family-names: Nys
       given-names: Jannes
@@ -22,3 +22,11 @@ preferred-citation:
     - family-names: Carrasquilla
       given-names: Juan
   year: 2026
+  date-released: "2026-10-22"
+  doi: "10.48550/arXiv.2610.32001"
+  url: "https://arxiv.org/abs/2610.32001"
+  identifiers:
+    - type: other
+      value: "arXiv:2610.32001"
+      description: "arXiv preprint (quant-ph)"
+
